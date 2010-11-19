@@ -52,12 +52,12 @@ class IANAGmailResults(GmailResultsFramework):
                 misc_dict = json.loads(misc)
             except ValueError as ve:
                 self.log.error('[ Sanity ] The misc input is not a json syntax string. Store it as { "rawstring": (...input...)} . The orignial Input:' + str(misc)+ "Reason:" + str(ve), extra=tags)
-                misc = '{ "rawString":"' + str(misc) + '"}'
+                continue
                 
             if misc_dict.has_key("fromemail"):
                 
-                msg = MIMEMultipart('localhost')
-                                   
+                msg = MIMEMultipart('localhost') 
+                msg['Subject'] = 'Results for Image: ' + str(item.item.file.name) + '\n\n' 
                 # attach preProcessingResult.
                 text = 'Results on PREPROCESSING the Image for configuration: \n'
                 preProcessingConfiguration = item.preProcessingConfiguration
@@ -113,7 +113,8 @@ class IANAGmailResults(GmailResultsFramework):
             if misc_dict.has_key("fromemail"):
                 
                 msg = MIMEMultipart('localhost')
-                    
+                msg['Subject'] = 'Results for Image: ' + str(item.item.file.name) + '\n\n'
+                
                 # if item failed in PPROCCALIB PHASE
                 if "PPROCCALIB" in item.status:
                     text = "Failed to Fetch PreProcessingData for item : "+item.item.file.name+'\n\n'
