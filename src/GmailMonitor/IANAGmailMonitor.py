@@ -20,6 +20,7 @@ from Logging.Logger import getLog
 from Locking.AppLock import getLock
 from IANAGmailSettings.Settings import setting
 from GmailMonitorFramework.GmailMonitorFramework import GmailMonitorFramework
+from email.mime.text import MIMEText
 
 class IANAGmailMonitor(GmailMonitorFramework):
     ''' This class implements the functionality to poll gmail accounts for
@@ -93,26 +94,22 @@ class IANAGmailMonitor(GmailMonitorFramework):
             self.log.info("The mail (id: {0:s}) is from: <{1:s}> with subject: {2:s}" 
                           .format(str(mid), fromField, subjectField), extra=tags)
             
-            message = mail.get_payload(decode=True)
-            if message is not None:
-                configDict = dict([v.split(':', 1) for v in message.splitlines() if ':' in v])
-                configDict["fromemail"] = fromField
-                configKeys = setting.get("config_keys")
-                for key in configDict.keys():
-                    #TODO: move these keys to settings module 
-                    if key not in configKeys:
-                        del configDict[key]
-            else:
-                configDict = {"fromemail":fromField}
             
-            message = json.dumps(configDict)
-                                    
+            configDict = {"fromemail":fromField}
+            isImage = False                
             
             #Downloading attachment from gmail
             parts = mail.walk()
             for p in parts:
+                if 'text/plain' in p.get_content_type():
+                    message = p.get_payload(decode=True)
+                    self.log.info('payload: '+str(message), extra=tags)
+                    if message is not None:
+                        configParams = [v.split(':', 1) for v in message.splitlines() if ':' in v]
+                        for param in configParams:
+                            configDict[param[0]] = param[1]
+                            
                 if p.get_content_maintype() !='multipart' and p.get('Content-Disposition') is not None:
-                     
                     fdata = p.get_payload(decode=True)
                     filename = p.get_filename()
                     # Store the file in the file cache
@@ -121,47 +118,51 @@ class IANAGmailMonitor(GmailMonitorFramework):
                     if picFileName is None:
                         self.log.error('Could Not save ' + filename + ' in the cache', extra=tags)
                         continue
-                    else:
-                        #Reading EXIF info
-                        (status, pic_datetime_info) = get_original_datetime_N80(picFileName)
+                    
+                    #Reading EXIF info
+                    (status, pic_datetime_info) = get_original_datetime_N80(picFileName)
                         
                     if status:
                         self.log.info("From Exif metadata, the picture {0:s} is taken at {1:s}"
                              .format(picFileName, pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S")).replace(',0',','), extra=tags)
                     else:
                         self.log.error("Cannot get original datetime from picture: " + picFileName + "details: " + str(pic_datetime_info), extra=tags)
+                        self.imcache.remove(filename)
                         continue # try next part
-                    
-                    #Uploading to http server
-                    
-                    response = cStringIO.StringIO()
+                    isImage = True
 
-                    curl = pycurl.Curl()
-                    curl.setopt(curl.WRITEFUNCTION, response.write)
-                    curl.setopt(curl.POST, 1)
-                    curl.setopt(curl.URL, setting.get("upload_url"))
-                    curl.setopt(curl.HTTPPOST,[
-                        ("device_id", subjectField),
-                        ("aux_id", ""), #TODO: using CronJob to read QR code
-                        ("misc", message), #not used
-                        ("record_datetime", pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S").replace(',0',',')), #change 08->8, otherwise the server will complaints because we cannot run datetime(2010,08,23,18,1,1)
-                        #("gps", ""), #not used
-                        ("data_type", "image/jpeg"),
-                        ("version", setting.get("http_post_version")),
-                        ("deployment_id", toField[0:toField.index('@')]), #e.g. surya.pltk1 ("from email")
-                        ("tag", ""), #not used  
-                        ("bin_file", (curl.FORM_FILE, picFileName))
-                        ])
-                    curl.perform()
-                    self.log.info("Running http post to: "+setting.get("upload_url"), extra=tags)
-                    server_rsp = str(response.getvalue())
-                    curl.close()
-                    if str(server_rsp).startswith("upok"):
-                        self.log.info("Successfully Uploading."+ str(server_rsp), extra=tags)
-                    else:
-                        self.log.error("The server returns errors."+ str(server_rsp), extra=tags)
-                    self.imcache.remove(filename)        
-                    self.log.info("Deleting uploaded temporary file: " + str(picFileName), extra=tags)  
+            if isImage:                    
+                message = json.dumps(configDict)
+                #Uploading to http server
+                
+                response = cStringIO.StringIO()
+    
+                curl = pycurl.Curl()
+                curl.setopt(curl.WRITEFUNCTION, response.write)
+                curl.setopt(curl.POST, 1)
+                curl.setopt(curl.URL, setting.get("upload_url"))
+                curl.setopt(curl.HTTPPOST,[
+                    ("device_id", subjectField),
+                    ("aux_id", ""), #TODO: using CronJob to read QR code
+                    ("misc", message), #not used
+                    ("record_datetime", pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S").replace(',0',',')), #change 08->8, otherwise the server will complaints because we cannot run datetime(2010,08,23,18,1,1)
+                    #("gps", ""), #not used
+                    ("data_type", "image/jpeg"),
+                    ("version", setting.get("http_post_version")),
+                    ("deployment_id", toField[0:toField.index('@')]), #e.g. surya.pltk1 ("from email")
+                    ("tag", ""), #not used  
+                    ("bin_file", (curl.FORM_FILE, picFileName))
+                    ])
+                curl.perform()
+                self.log.info("Running http post to: "+setting.get("upload_url"), extra=tags)
+                server_rsp = str(response.getvalue())
+                curl.close()
+                if str(server_rsp).startswith("upok"):
+                    self.log.info("Successfully Uploading."+ str(server_rsp), extra=tags)
+                else:
+                    self.log.error("The server returns errors."+ str(server_rsp), extra=tags)
+                self.imcache.remove(filename)        
+                self.log.info("Deleting uploaded temporary file: " + str(picFileName), extra=tags)  
                     
         gmailConn.close()
         gmailConn.logout()
