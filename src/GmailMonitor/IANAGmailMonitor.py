@@ -90,8 +90,8 @@ class IANAGmailMonitor(GmailMonitorFramework):
                 continue
             
             #TODO: add spam detection: only from "surya." with subject "szu" is considered valid.
-            self.log.info("The mail (id: {0:s}) is from: <{1:s}> with subject: {2:s}" 
-                          .format(str(mid), fromField, subjectField), extra=tags)
+            self.log.info("The mail (id: {0:s}) is from: <{1:s}> and to: <{2:s}> with subject: {3:s}" 
+                          .format(str(mid), fromField, toField, subjectField), extra=tags)
             
             message = mail.get_payload(decode=True)
             if message is not None:
