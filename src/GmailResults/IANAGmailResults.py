@@ -40,7 +40,7 @@ class IANAGmailResults(GmailResultsFramework):
         smtpserver = smtplib.SMTP("smtp.gmail.com",587)
         smtpserver.ehlo()
         smtpserver.starttls()
-        smtpserver.ehlo
+        smtpserver.ehlo()
         smtpserver.login(gmail_user, gmail_pwd)
         
         self.log.info("Checking Results... {0}".format(str(setting.get("poll_interval"))), extra=tags)
@@ -55,6 +55,18 @@ class IANAGmailResults(GmailResultsFramework):
                 misc = '{ "rawString":"' + str(misc) + '"}'
                 
             if misc_dict.has_key("fromemail"):
+
+                # Header so To:, From:, and Subject: are set correctly
+                if misc_dict.has_key("toemail"):
+                    # core gmail address must be configured to send as this user too! See settings->accounts
+                    msghdr = "From: " + misc_dict["toemail"] + "\n"
+                    sendFrom = misc_dict["toemail"]
+                else:
+                    msghdr = "From: " + setting.get("username") + "\n"
+                    sendFrom = setting.get("username")
+                
+                msghdr += "To: " + misc_dict["fromemail"] + "\n"
+                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n\n'
                 
                 msg = MIMEMultipart('localhost')
                                    
@@ -95,8 +107,9 @@ class IANAGmailResults(GmailResultsFramework):
                 
                 textmsg = MIMEText(text)
                 msg.attach(textmsg)
-                
-                smtpserver.sendmail(setting.get("username"), misc_dict["fromemail"], msg.as_string())
+
+                smtpserver.sendmail(sendFrom, misc_dict["fromemail"], msghdr + msg.as_string())
+                    
                 self.log.info("sent email", extra=tags)
                 item.isEmailed = True
                 item.save()
@@ -111,6 +124,18 @@ class IANAGmailResults(GmailResultsFramework):
                 misc = '{ "rawString":"' + str(misc) + '"}'
                 
             if misc_dict.has_key("fromemail"):
+
+                # Header so To:, From:, and Subject: are set correctly
+                if misc_dict.has_key("toemail"):
+                    # core gmail address must be configured to send as this user too! See settings->accounts
+                    msghdr = "From: " + misc_dict["toemail"] + "\n"
+                    sendFrom = misc_dict["toemail"]
+                else:
+                    msghdr = "From: " + setting.get("username") + "\n"
+                    sendFrom = setting.get("username")
+                
+                msghdr += "To: " + misc_dict["fromemail"] + "\n"
+                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n\n'
                 
                 msg = MIMEMultipart('localhost')
                     
@@ -186,8 +211,8 @@ class IANAGmailResults(GmailResultsFramework):
                         text = "Failed processing item: "+item.item.file.name+'\n'
                         
                 msgtext = MIMEText(text)
-                msg.attach(msgtext)
-                smtpserver.sendmail(setting.get("username"), misc_dict["fromemail"], msg.as_string())
+                msg.attach(msghdr + msgtext)
+                smtpserver.sendmail(send_from, misc_dict["fromemail"], msg.as_string())
                 self.log.info("sent email", extra=tags)
                 item.isEmailed = True
                 item.save()

@@ -83,9 +83,8 @@ class IANAGmailMonitor(GmailMonitorFramework):
             toField = rfc822.parseaddr(mail.get("TO"))[1]
             
             subjectField = mail.get("SUBJECT") # should be szu###
-            if "szu" not in subjectField:
-                self.log.error("Errors while fetching mail (mail id:{0:s})... It does not have szu in subjectField".format(str(mid)), extra=tags)
-                continue
+
+            # Why are we checking this?
             if "Result" in subjectField:
                 continue
             
@@ -97,13 +96,18 @@ class IANAGmailMonitor(GmailMonitorFramework):
             if message is not None:
                 configDict = dict([v.split(':', 1) for v in message.splitlines() if ':' in v])
                 configDict["fromemail"] = fromField
+                configDict["toemail"] = toField
                 configKeys = setting.get("config_keys")
                 for key in configDict.keys():
-                    #TODO: move these keys to settings module 
-                    if key not in configKeys:
-                        del configDict[key]
+                    #TODO: move these keys to settings module
+                    # MLL: Why are we removing fromemail and toemail? I think they are useful to have here
+                    #      so I commented the below out.
+                    #if key not in configKeys:
+                    #    del configDict[key]
+                    pass
             else:
-                configDict = {"fromemail":fromField}
+                configDict = {"fromemail":fromField, "toemail":toField}
+                
             
             message = json.dumps(configDict)
                                     
@@ -141,9 +145,9 @@ class IANAGmailMonitor(GmailMonitorFramework):
                     curl.setopt(curl.POST, 1)
                     curl.setopt(curl.URL, setting.get("upload_url"))
                     curl.setopt(curl.HTTPPOST,[
-                        ("device_id", subjectField),
+                        ("device_id", fromField),
                         ("aux_id", ""), #TODO: using CronJob to read QR code
-                        ("misc", message), #not used
+                        ("misc", message), # carries from and to emails currently
                         ("record_datetime", pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S").replace(',0',',')), #change 08->8, otherwise the server will complaints because we cannot run datetime(2010,08,23,18,1,1)
                         #("gps", ""), #not used
                         ("data_type", "image/jpeg"),

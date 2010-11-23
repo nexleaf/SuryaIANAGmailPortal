@@ -18,6 +18,6 @@ setting = {"smtp_host": "smtp.gmail.com",
            "use_tls":  "True",
            "poll_interval": 10,
            "upload_url": "http://127.0.0.1:8000/upload_image/",
-           "http_post_version":"Shozu",
-           "config_keys":['exposedtime', 'flowrate', 'filterradius']
+           "http_post_version":"SuryaIANAGmailPortal",
+           "config_keys":['exposedtime', 'flowrate', 'filterradius', 'fromemail', 'toemail']
            }
