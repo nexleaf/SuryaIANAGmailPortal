@@ -66,7 +66,7 @@ class IANAGmailResults(GmailResultsFramework):
                     sendFrom = setting.get("username")
                 
                 msghdr += "To: " + misc_dict["fromemail"] + "\n"
-                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n\n'
+                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n'
                 
                 msg = MIMEMultipart('localhost')
                                    
@@ -135,7 +135,7 @@ class IANAGmailResults(GmailResultsFramework):
                     sendFrom = setting.get("username")
                 
                 msghdr += "To: " + misc_dict["fromemail"] + "\n"
-                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n\n'
+                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n'
                 
                 msg = MIMEMultipart('localhost')
                     
