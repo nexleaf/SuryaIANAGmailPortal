@@ -1,0 +1,53 @@
+
+{% if "PPROCCALIB" in item.status %}
+Failed to Fetch PreProcessingData for item: {{ item.item.file.name }}
+{% else %}
+{% if "PPROC" in item.status %}
+"Failed to PreProcess the item: {{ item.item.file.name }}
+{% else %}
+{% if "COMPUCALIB" in item.status %}
+Failed to Fetch Comput ation Calibration info: {{ item.item.file.name }}
+{% else %}
+{% if "COMPU" in item.status %}
+Failed to Computate Results: {{ item.item.file.name }}
+{% else %}
+{% if "SAVIN" in item.status  %}
+Failed to Save Results for item: {{ item.item.file.name }}
+{% else %}
+Failed processing item: {{ item.item.file.name }}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+
+
+{% if "PPROCCALIB" not in item.status and "SAVIN" not in item.status %}
+PreProcessing Parameters Used:
+dp           : {{ item.preProcessingConfiguration.dp }}
+minimumRadius: {{ item.preProcessingConfiguration.minimumRadius }}
+maximumRadius: {{ item.preProcessingConfiguration.maximumRadius }}
+highThreshold: {{ item.preProcessingConfiguration.highThreshold }}
+accumulatorThreshold: {{ item.preProcessingConfiguration.accumulatorThreshold }}
+minimumDistance: {{ item.preProcessingConfiguration.minimumDistance }}
+samplingFactor : {{ item.preProcessingConfiguration.samplingFactor }}
+
+DebugPicName: {{ item.preProcessingResult.debugImage.name }}
+
+{% if "PPROC" not in item.status %}
+Results:
+SampledRGB:  {{ item.preProcessingResult.sampled) }}
+
+{% if "COMPUCALIB" not in item.status %}
+Results on COMPUTATION of the Results:
+Computation parameters Used:
+filterRadius: {{ item.computationConfiguration.filterRadius }}
+exposedTime : {{ item.computationConfiguration.exposedTime }}
+bcStrip     : {{ item.bcStrips.bcStrips) }}
+airFlowRate : {{ item.computationConfiguration.airFlowRate) }}
+{% endif %}
+
+{% endif %}
+
+{% endif %}
+
