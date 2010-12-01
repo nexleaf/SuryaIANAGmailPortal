@@ -30,7 +30,7 @@ connect('SuryaDB')
 # Setup some variables for the djano template loader to work
 # Need to make this not be a call to set an environment variable... does pwd work from here?
 djsettings.configure(DEBUG=True, TEMPLATE_DEBUG=True, \
-                     TEMPLATE_DIRS=(os.getenv("RESULT_EMAIL_TEMPLATES"),))
+                     TEMPLATE_DIRS=(os.path.dirname(__file__)+'/templates',))
 
 class IANAGmailResults(GmailResultsFramework):
     ''' This class implements the functionality to poll the SuryaDB
