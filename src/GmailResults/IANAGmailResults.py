@@ -47,6 +47,8 @@ class IANAGmailResults(GmailResultsFramework):
         
         for item in SuryaIANAResult.objects(isEmailed=False):
             
+            self.log.info("checking SuryaIANAResult item", extra=tags)
+            
             try:
                 misc = item.item.misc
                 misc_dict = json.loads(misc)
@@ -102,6 +104,8 @@ class IANAGmailResults(GmailResultsFramework):
                 item.save()
                     
         for item in SuryaIANAFailedResult.objects(isEmailed=False):
+            
+            self.log.info("checking SuryaIANAFailedResult item", extra=tags)
             
             try:
                 misc = item.item.misc
