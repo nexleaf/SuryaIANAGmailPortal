@@ -84,9 +84,7 @@ class IANAGmailMonitor(GmailMonitorFramework):
             toField = rfc822.parseaddr(mail.get("TO"))[1]
             
             subjectField = mail.get("SUBJECT") # should be szu###
-            if "szu" not in subjectField:
-                self.log.error("Errors while fetching mail (mail id:{0:s})... It does not have szu in subjectField".format(str(mid)), extra=tags)
-                continue
+
             if "Result" in subjectField:
                 continue
             
@@ -95,7 +93,7 @@ class IANAGmailMonitor(GmailMonitorFramework):
                           .format(str(mid), fromField, subjectField), extra=tags)
             
             
-            configDict = {"fromemail":fromField}
+            configDict = {"fromemail":fromField, "toemail":toField}
             isImage = False                
             
             #Downloading attachment from gmail
