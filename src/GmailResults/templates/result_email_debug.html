@@ -1,0 +1,33 @@
+Results on PREPROCESSING the Image for configuration:
+
+PreProcessing Parameters Used:
+dp            : {{ item.preProcessingConfiguration.dp }}
+minimumRadius : {{ item.preProcessingConfiguration.minimumRadius }}
+maximumRadius : {{ item.preProcessingConfiguration.maximumRadius }}
+highThreshold : {{ item.preProcessingConfiguration.highThreshold }}
+accumulatorThreshold: {{ item.preProcessingConfiguration.accumulatorThreshold }}
+minimumDistance : {{ item.preProcessingConfiguration.minimumDistance }}
+samplingFactor  : {{ item.preProcessingConfiguration.samplingFactor }}
+
+Results:
+SampledRGB  : {{ item.preProcessingResult.sampled }}
+DebugPicName: {{ item.preProcessingResult.debugImage.name }}
+
+Results on COMPUTATION of the Results:
+
+Computation parameters Used:
+filterRadius: {{ item.computationConfiguration.filterRadius }}
+exposedTime : {{ item.computationConfiguration.exposedTime }}
+bcStrip     : {{ item.bcStrips.bcStrips }}
+airFlowRate : {{ itemcomputationConfiguration.airFlowRate }}
+
+
+Results:
+BCAreaRed   : {{ item.computationResult.result.BCAreaRed }}
+BCAreaGreen : {{ item.computationResult.result.BCAreaGreen }}
+BCAreaBlue  : {{ item.computationResult.result.BCAreaBlue }}
+BCVolRed    : {{ item.computationResult.result.BCVolRed }}
+BCVolGreen  : {{ item.computationResult.result.BCVolGreen }}
+BCVolBlue   : {{ item.computationResult.result.BCVolBlue }}
+
+chartFileName: {{ item.computationResult.chartImage.name }}
