@@ -30,17 +30,16 @@ connect('SuryaDB')
 # Setup some variables for the djano template loader to work
 # Need to make this not be a call to set an environment variable... does pwd work from here?
 djsettings.configure(DEBUG=True, TEMPLATE_DEBUG=True, \
-                     TEMPLATE_DIRS=(os.getenv("RESULT_EMAIL_TEMPLATES"),))
+                     TEMPLATE_DIRS=(os.path.dirname(__file__)+'/templates',))
 
 class IANAGmailResults(GmailResultsFramework):
     ''' This class implements the functionality to poll the SuryaDB
-        for results on processing uploaded images and emails the 
-        sender with these results.
-    '''
+for results on processing uploaded images and emails the
+sender with these results.
+'''
     
     def checkResults(self):
-        ''' Refer GmailResultsFramework.checkResults for documentation
-        '''
+        ''' Refer GmailResultsFramework.checkResults for documentation'''
         tags = self.grestags + " IANA"
         
         gmail_user = setting.get("username")
@@ -119,7 +118,7 @@ class IANAGmailResults(GmailResultsFramework):
                 
                 msgtext = MIMEText(text)
                 msg.attach(msghdr + msgtext)
-                smtpserver.sendmail(send_from, misc_dict["fromemail"], msg.as_string())
+                smtpserver.sendmail(sendFrom, misc_dict["fromemail"], msg.as_string())
                 self.log.info("sent email", extra=tags)
                 item.isEmailed = True
                 item.save()

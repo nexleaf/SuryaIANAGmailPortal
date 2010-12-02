@@ -19,5 +19,5 @@ setting = {"smtp_host": "smtp.gmail.com",
            "poll_interval": 10,
            "upload_url": "http://127.0.0.1:8000/upload_image/",
            "http_post_version":"SuryaIANAGmailPortal",
-           "config_keys":['exposedtime', 'flowrate', 'filterradius', 'fromemail', 'toemail']
+           "config_keys":['exposedtime', 'flowrate', 'filterradius', 'toemail', 'fromemail']
            }

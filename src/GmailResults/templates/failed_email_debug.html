@@ -1,4 +1,3 @@
-
 {% if "PPROCCALIB" in item.status %}
 Failed to Fetch PreProcessingData for item: {{ item.item.file.name }}
 {% else %}
@@ -11,7 +10,7 @@ Failed to Fetch Comput ation Calibration info: {{ item.item.file.name }}
 {% if "COMPU" in item.status %}
 Failed to Computate Results: {{ item.item.file.name }}
 {% else %}
-{% if "SAVIN" in item.status  %}
+{% if "SAVIN" in item.status %}
 Failed to Save Results for item: {{ item.item.file.name }}
 {% else %}
 Failed processing item: {{ item.item.file.name }}
@@ -24,7 +23,7 @@ Failed processing item: {{ item.item.file.name }}
 
 {% if "PPROCCALIB" not in item.status and "SAVIN" not in item.status %}
 PreProcessing Parameters Used:
-dp           : {{ item.preProcessingConfiguration.dp }}
+dp : {{ item.preProcessingConfiguration.dp }}
 minimumRadius: {{ item.preProcessingConfiguration.minimumRadius }}
 maximumRadius: {{ item.preProcessingConfiguration.maximumRadius }}
 highThreshold: {{ item.preProcessingConfiguration.highThreshold }}
@@ -36,14 +35,14 @@ DebugPicName: {{ item.preProcessingResult.debugImage.name }}
 
 {% if "PPROC" not in item.status %}
 Results:
-SampledRGB:  {{ item.preProcessingResult.sampled) }}
+SampledRGB: {{ item.preProcessingResult.sampled) }}
 
 {% if "COMPUCALIB" not in item.status %}
 Results on COMPUTATION of the Results:
 Computation parameters Used:
 filterRadius: {{ item.computationConfiguration.filterRadius }}
 exposedTime : {{ item.computationConfiguration.exposedTime }}
-bcStrip     : {{ item.bcStrips.bcStrips) }}
+bcStrip : {{ item.bcStrips.bcStrips) }}
 airFlowRate : {{ item.computationConfiguration.airFlowRate) }}
 {% endif %}
 
