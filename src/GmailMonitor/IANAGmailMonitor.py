@@ -21,6 +21,7 @@ from Locking.AppLock import getLock
 from IANAGmailSettings.Settings import setting
 from GmailMonitorFramework.GmailMonitorFramework import GmailMonitorFramework
 from email.mime.text import MIMEText
+import datetime
 
 class IANAGmailMonitor(GmailMonitorFramework):
     ''' This class implements the functionality to poll gmail accounts for
@@ -125,8 +126,9 @@ class IANAGmailMonitor(GmailMonitorFramework):
                              .format(picFileName, pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S")).replace(',0',','), extra=tags)
                     else:
                         self.log.error("Cannot get original datetime from picture: " + picFileName + "details: " + str(pic_datetime_info), extra=tags)
-                        self.imcache.remove(filename)
-                        continue # try next part
+                        pic_datetime_info = datetime.datetime.now()
+                        #self.imcache.remove(filename) #set the current datetime
+                        #continue # try next part
                     isImage = True
 
             if isImage:                    
@@ -140,7 +142,7 @@ class IANAGmailMonitor(GmailMonitorFramework):
                 curl.setopt(curl.POST, 1)
                 curl.setopt(curl.URL, setting.get("upload_url"))
                 curl.setopt(curl.HTTPPOST,[
-                    ("device_id", subjectField),
+                    ("device_id", fromField),
                     ("aux_id", ""), #TODO: using CronJob to read QR code
                     ("misc", message), #not used
                     ("record_datetime", pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S").replace(',0',',')), #change 08->8, otherwise the server will complaints because we cannot run datetime(2010,08,23,18,1,1)
