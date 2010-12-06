@@ -77,7 +77,7 @@ sender with these results.
                 
                 msg = MIMEMultipart('localhost')
                 
-                text = render_to_string("result_email_debug.html", {'item': item})
+                text = render_to_string("result_email_default.html", {'item': item})
                                 
                 textmsg = MIMEText(text)
                 
