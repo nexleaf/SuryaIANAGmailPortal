@@ -73,7 +73,7 @@ sender with these results.
                     sendFrom = setting.get("username")
                 
                 msghdr += "To: " + misc_dict["fromemail"] + "\n"
-                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n'
+                msghdr += "Subject: BC Results for " + str(item.item.filename) + '\n'
                 
                 msg = MIMEMultipart('localhost')
                 
@@ -110,15 +110,15 @@ sender with these results.
                     sendFrom = setting.get("username")
                 
                 msghdr += "To: " + misc_dict["fromemail"] + "\n"
-                msghdr += "Subject: BC Results for " + str(item.computationResult.chartImage.name) + '\n'
+                msghdr += "Subject: BC Results for " + str(item.item.filename) + '\n'
                 
                 msg = MIMEMultipart('localhost')
 
                 text = render_to_string("failed_email_debug.html", {'item': item})
                 
                 msgtext = MIMEText(text)
-                msg.attach(msghdr + msgtext)
-                smtpserver.sendmail(sendFrom, misc_dict["fromemail"], msg.as_string())
+                msg.attach(msgtext)
+                smtpserver.sendmail(sendFrom, misc_dict["fromemail"], msghdr + msg.as_string())
                 self.log.info("sent email", extra=tags)
                 item.isEmailed = True
                 item.save()

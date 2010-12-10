@@ -33,7 +33,26 @@ class IANAGmailMonitor(GmailMonitorFramework):
         ''' Constructor
         '''
         self.imcache = ImageCache('/home/surya/imagecache')
-        
+    
+    @staticmethod
+    def remove_undecodable_from_dict(inputDict):
+        '''Remove any (k, v) which contains characters json can not decode'''
+        # move this function to some general util library?
+        poplist = []
+        for (k, v) in inputDict.items():
+            try:
+                json.encoder.encode_basestring_ascii(k)
+            except UnicodeDecodeError:
+                poplist.append(k)
+                continue
+            try:
+                json.encoder.encode_basestring_ascii(v)
+            except UnicodeDecodeError:
+                poplist.append(k)
+        for p in poplist:
+            inputDict.pop(p)
+        return inputDict
+    
     def checkInbox(self):
         ''' Refer GmailMonitorFramework.checkInbox for documentation. 
         '''
@@ -130,10 +149,12 @@ class IANAGmailMonitor(GmailMonitorFramework):
                         #continue # try next part
                     isImage = True
 
-            if isImage:                    
+            if isImage:
+                # Check for invalid characters in dictionary that json convertor can not handle
+                configDict = IANAGmailMonitor.remove_undecodable_from_dict(configDict)
                 message = json.dumps(configDict)
-                #Uploading to http server
                 
+                #Upload to http server
                 response = cStringIO.StringIO()
     
                 curl = pycurl.Curl()
