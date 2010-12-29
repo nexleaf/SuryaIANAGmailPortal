@@ -166,12 +166,13 @@ class IANAGmailMonitor(GmailMonitorFramework):
                     ("aux_id", ""), #TODO: using CronJob to read QR code
                     ("misc", message), #not used
                     ("record_datetime", pic_datetime_info.strftime("%Y,%m,%d,%H,%M,%S").replace(',0',',')), #change 08->8, otherwise the server will complaints because we cannot run datetime(2010,08,23,18,1,1)
-                    #("gps", ""), #not used
-                    ("data_type", "image/jpeg"),
+                    #("gps", ""), #not used # needs to change to three post values instead of one
+                    ("datatype", "image"),
+                    ("mimetype", "image/jpeg"),
                     ("version", setting.get("http_post_version")),
                     ("deployment_id", toField[0:toField.index('@')]), #e.g. surya.pltk1 ("from email")
                     ("tag", ""), #not used  
-                    ("bin_file", (curl.FORM_FILE, picFileName))
+                    ("data", (curl.FORM_FILE, picFileName))
                     ])
                 curl.perform()
                 self.log.info("Running http post to: "+setting.get("upload_url"), extra=tags)
