@@ -5,7 +5,7 @@ Thank you for submitting an image to the Nexleaf Black Carbon Monitoring System.
 BC Concentration: {{ item.computationResult.result.BCVolRed }} ug/m^3
 BC Loading: {{ item.computationResult.result.BCAreaRed }} ug/cm^2
 
-The exposure time associated with this filter is: {{ item.computationConfiguration.exposedTime }} minutes. In order to overide the exposure time include "exposedtime:<your value in minutes>" in the body of your email.
+The exposure time associated with this filter is: {{ item.computationConfiguration.exposedTime }} {{ item.computationConfiguration.timeUnits }}. In order to overide the exposure time include "exposedtime:<your value in {{ item.computationConfiguration.timeUnits }}>" in the body of your email.
 
 The air flow rate associated with this filter is: {{ item.computationConfiguration.airFlowRate }} l/m. In order to override the air flow rate include "flowrate:<your value in l/m>" in the body of your email.
 
@@ -15,7 +15,7 @@ http://surya.nexleaf.org/surya/result/{{ item.id }}/
 Thank you!
 
 For assistance, please email:
-nithya@nexleaf.org
+martin@nexleaf.org
 
 For more information see:
 http://nexleaf.org

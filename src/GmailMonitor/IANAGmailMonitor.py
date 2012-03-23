@@ -124,7 +124,7 @@ class IANAGmailMonitor(GmailMonitorFramework):
                     if message is not None:
                         configParams = [v.split(':', 1) for v in message.splitlines() if ':' in v]
                         for param in configParams:
-                            configDict[param[0]] = param[1]
+                            configDict[param[0].strip().lower()] = param[1].strip().lower()
                             
                 if p.get_content_maintype() !='multipart' and p.get('Content-Disposition') is not None:
                     fdata = p.get_payload(decode=True)
