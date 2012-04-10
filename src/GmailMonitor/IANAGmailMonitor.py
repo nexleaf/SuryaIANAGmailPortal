@@ -189,6 +189,9 @@ class IANAGmailMonitor(GmailMonitorFramework):
         gmailConn.logout()
 
 if __name__ == '__main__':
+    runinterval = 10
+    if len(sys.argv) > 1:
+        runinterval = int(sys.argv[1])
     gmon = IANAGmailMonitor()
-    gmon.run("IANAGmailMonitor.pid", "IANAGmailMonitor", 10)    
+    gmon.run("IANAGmailMonitor.pid", "IANAGmailMonitor", runinterval)    
     

@@ -127,6 +127,9 @@ sender with these results.
 
         
 if __name__ == '__main__':
+    runinterval = 10
+    if len(sys.argv) > 1:
+        runinterval = int(sys.argv[1])
     connect('SuryaDB')
     gres = IANAGmailResults()
-    gres.run("IANAGmailResults.pid", "IANAGmailResults", 10)
+    gres.run("IANAGmailResults.pid", "IANAGmailResults", runinterval)
