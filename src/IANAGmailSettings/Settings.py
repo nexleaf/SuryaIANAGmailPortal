@@ -21,3 +21,9 @@ setting = {"smtp_host": "smtp.gmail.com",
            "http_post_version":"SuryaIANAGmailPortal",
            "config_keys":['exposedtime', 'flowrate', 'filterradius', 'toemail', 'fromemail']
            }
+
+try:
+    from Settings_local import *
+except ImportError:
+    pass
+
