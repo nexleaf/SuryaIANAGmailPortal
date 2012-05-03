@@ -25,7 +25,7 @@ from mongoengine import *
 
 from GmailResultsFramework.GmailResultsFramework import GmailResultsFramework
 
-connect('SuryaDB')
+connect('SuryaDB', tz_aware=True)
 
 # Setup some variables for the djano template loader to work
 # Need to make this not be a call to set an environment variable... does pwd work from here?
@@ -130,6 +130,6 @@ if __name__ == '__main__':
     runinterval = 10
     if len(sys.argv) > 1:
         runinterval = int(sys.argv[1])
-    connect('SuryaDB')
+    connect('SuryaDB', tz_aware=True)
     gres = IANAGmailResults()
     gres.run("IANAGmailResults.pid", "IANAGmailResults", runinterval)
