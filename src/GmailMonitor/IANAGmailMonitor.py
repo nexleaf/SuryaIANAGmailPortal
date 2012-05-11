@@ -125,11 +125,13 @@ class IANAGmailMonitor(GmailMonitorFramework):
                         configParams = [v.split(':', 1) for v in message.splitlines() if ':' in v]
                         for param in configParams:
                             configDict[param[0].strip().lower()] = param[1].strip().lower()
+                    continue
                             
                 if p.get_content_maintype() !='multipart' and p.get('Content-Disposition') is not None:
                     fdata = p.get_payload(decode=True)
                     filename = p.get_filename()
                     # Store the file in the file cache
+                    self.log.info("Storing file: " + filename)
                     picFileName = self.imcache.put(filename, fdata)
                     
                     if picFileName is None:
