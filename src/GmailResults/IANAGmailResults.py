@@ -76,8 +76,12 @@ sender with these results.
                 msghdr += "Subject: BC Results for " + str(item.item.filename) + '\n'
                 
                 msg = MIMEMultipart('localhost')
+
+                flowratestr = "cc/m"
+                if item.computationConfiguration.airFlowRate < 20:
+                    flowratestr = "l/m"
                 
-                text = render_to_string("result_email_default.html", {'item': item})
+                text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr})
                                 
                 textmsg = MIMEText(text)
                 
