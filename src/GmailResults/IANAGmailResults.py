@@ -22,6 +22,8 @@ from Logging.Logger import getLog
 from Locking.AppLock import getLock
 from IANAGmailSettings.Settings import setting
 from mongoengine import *
+from Validation import Validate
+
 
 from GmailResultsFramework.GmailResultsFramework import GmailResultsFramework
 
@@ -63,6 +65,8 @@ sender with these results.
                 
             if misc_dict.has_key("fromemail"):
 
+                warn, warnmsg = Validate.validate(item)
+
                 # Header so To:, From:, and Subject: are set correctly
                 if misc_dict.has_key("toemail"):
                     # core gmail address must be configured to send as this user too! See settings->accounts
@@ -81,7 +85,7 @@ sender with these results.
                 if item.computationConfiguration.airFlowRate < 20:
                     flowratestr = "l/m"
                 
-                text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr})
+                text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr, 'warnmsg': warnmsg})
                                 
                 textmsg = MIMEText(text)
                 

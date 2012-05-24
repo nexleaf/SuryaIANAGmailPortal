@@ -4,6 +4,9 @@ Thank you for submitting an image to the Nexleaf Black Carbon Monitoring System.
 
 BC Concentration: {{ item.computationResult.result.BCVolRed }} ug/m^3
 BC Loading: {{ item.computationResult.result.BCAreaRed }} ug/cm^2
+Warnings: {{ warnmsg }}
+
+Note: If there are warnings, this result may be invalid!
 
 The exposure time associated with this filter is: {{ item.computationConfiguration.exposedTime }} {{ item.computationConfiguration.timeUnits }}. In order to overide the exposure time include "exposedtime:<your value in {{ item.computationConfiguration.timeUnits }}>" in the body of your email.
 
