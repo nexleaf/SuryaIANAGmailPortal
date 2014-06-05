@@ -65,7 +65,7 @@ sender with these results.
                 
             if misc_dict.has_key("fromemail"):
 
-                warn, warnmsg = Validate.validate(item)
+                #warn, warnmsg = Validate.validate(item)
 
                 # Header so To:, From:, and Subject: are set correctly
                 if misc_dict.has_key("toemail"):
@@ -85,7 +85,8 @@ sender with these results.
                 if item.computationConfiguration.airFlowRate < 20:
                     flowratestr = "l/m"
                 
-                text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr, 'warnmsg': warnmsg})
+                #text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr, 'warnmsg': warnmsg})
+                text = render_to_string("result_email_default.html", {'item': item, 'flowratestr': flowratestr})
                                 
                 textmsg = MIMEText(text)
                 

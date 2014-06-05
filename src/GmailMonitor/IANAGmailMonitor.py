@@ -1,7 +1,7 @@
-'''
+B'''
 Created on Nov 15, 2010
 
-@author: surya
+@0;278;0cauthor: surya
 '''
 import os
 import sys
@@ -13,6 +13,7 @@ import pycurl
 import imaplib
 import logging
 import cStringIO
+import string
 
 from ImageUtils.ImageCache import ImageCache
 from ImageUtils.sampleExifN80 import get_original_datetime_N80
@@ -100,8 +101,8 @@ class IANAGmailMonitor(GmailMonitorFramework):
             mailText = rsps[0][1]
             mail = email.message_from_string(mailText)
             
-            fromField = rfc822.parseaddr(mail.get("FROM"))[1]
-            toField = rfc822.parseaddr(mail.get("TO"))[1]
+            fromField = rfc822.parseaddr(mail.get("FROM").lower())[1]
+            toField = rfc822.parseaddr(mail.get("TO").lower())[1]
             
             subjectField = mail.get("SUBJECT") # should be szu###
 
@@ -124,12 +125,13 @@ class IANAGmailMonitor(GmailMonitorFramework):
                     if message is not None:
                         configParams = [v.split(':', 1) for v in message.splitlines() if ':' in v]
                         for param in configParams:
-                            configDict[param[0].strip().lower()] = param[1].strip().lower()
+                            configDict[param[0].strip().lower()] = param[1].strip(string.punctuation + ' ').lower()
                     continue
                             
                 if p.get_content_maintype() !='multipart' and p.get('Content-Disposition') is not None:
                     fdata = p.get_payload(decode=True)
                     filename = p.get_filename()
+                    configDict['origfilename'] = filename
                     # Store the file in the file cache
                     self.log.info("Storing file: " + filename)
                     picFileName = self.imcache.put(filename, fdata)
